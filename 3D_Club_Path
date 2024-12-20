@@ -1,0 +1,260 @@
+# Imported Packages
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+# --------------------------------------------------------------------------------------
+
+# Scale Factor 
+scale = 100    
+trans_angle = int(input("Translational Angle (Degrees): "))
+swing_plane = int(input("Swing Plane Angle (Degrees): "))
+AOA = int(input("Angle of Attack (Degrees): "))
+
+if type(scale) and type(trans_angle) and type(AOA) == str: 
+
+    print("\nInput Values are not Valid! Please Input an Integer!\n\nTry Again!!\n")
+
+else: 
+
+    # Defining Plot 
+    fig = plt.figure()
+    ax = plt.axes(projection ='3d')
+
+    # Degree to Radians Conversion 
+    trans_angle_rad = trans_angle*(np.pi/180)
+    swing_plane_rad = swing_plane*(np.pi/180)
+    AOA_rad = (AOA)*(np.pi/180)
+
+    # --------------------------------------------------------------------------------------
+
+    # Equation of a Plane 
+    # Initial Points 
+    p1 = (-scale/2,0,0)
+    p2 = (-scale/2,scale,0)
+    p3 = (scale/2,scale,0)
+
+    # Vectors from points 
+    V1 = (p3[0]-p1[0],p3[1]-p1[1],p3[2]-p1[2])
+    V2 = (p2[0]-p1[0],p2[1]-p1[1],p2[2]-p1[2])
+
+    # Resulting Coefficients 
+    a = V1[1]*V2[2] - V1[2]*V2[1]
+    b = V1[2]*V2[0] - V1[0]*V2[2]
+    c = V1[0]*V2[1] - V1[1]*V2[0]
+    d = -(a*(-p3[0]) + b*(-p3[1]) + c*(-p3[2]))
+
+    # 2d lists for X, Y, and Z to create a plan
+    xcor_p_list = np.linspace(p1[0],p3[0],10)
+    ycor_p_list = np.linspace(p1[1],p3[1],10)
+    xcor_p, ycor_p = np.meshgrid(xcor_p_list,ycor_p_list)
+    zcor_p = (d - a*xcor_p - b*ycor_p) / c
+
+    # --------------------------------------------------------------------------------------
+
+    # Equation of a circle 
+    # Circle characteristics 
+    cen_x,cen_y = (0,scale/2)
+    r = scale/2
+
+    # 1d list for 
+    theta = np.linspace(0, 2*np.pi, 200)
+    ycor_c = r*np.sin(theta) + cen_y
+    xcor_c = r*np.cos(theta) + cen_x
+
+    # --------------------------------------------------------------------------------------
+
+    # Equation of Tangent Line Based on AOA and translation plane 
+    if trans_angle == 0: 
+        if AOA == 0:
+            Y_tan = 0
+            Z_tan = 0
+            X_tan = np.linspace(-scale, scale, 200)
+
+            x2 = 0
+            y2 = 0
+            z2 = 0
+
+            path = -AOA + swing_plane
+
+        elif AOA == 90: 
+            Y_tan = np.linspace(-scale, scale, 200)
+            Z_tan = 0
+            X_tan = r
+
+            x2 = r
+            y2 = r
+            z2 = 0
+
+            path = -AOA + swing_plane
+
+        elif AOA == -90: 
+            Y_tan = np.linspace(-scale, scale, 200)
+            Z_tan = 0
+            X_tan = -r
+
+            x2 = -r
+            y2 = r
+            z2 = 0
+
+            path = -AOA + swing_plane
+
+        elif AOA > 0 and AOA < 90 or AOA < 0 and AOA > -90:
+            y2 = r - r*np.cos(AOA_rad)
+            x2 = r*np.sin(AOA_rad)
+            z2 = 0
+
+            m = -((x2-cen_x)/(y2-cen_y))
+            b = y2 - m*x2
+
+            y_tan = m*np.linspace(-scale, scale, 200) + b
+
+            Y_tan = y_tan
+            Z_tan = 0
+            X_tan = np.linspace(-scale, scale, 200)
+
+            path = -AOA + swing_plane
+
+    elif trans_angle == 90:
+        if AOA == 0:
+            Y_tan = 0
+            Z_tan = 0
+            X_tan = np.linspace(-scale, scale, 200)
+
+            x2 = 0
+            y2 = 0
+            z2 = 0
+
+            path = 0 + swing_plane
+
+        elif AOA == 90: 
+            X_tan = r
+            Y_tan = 0
+            Z_tan = np.linspace(-scale, scale, 200)
+
+            x2 = r
+            y2 = 0
+            z2 = r
+
+            path = 0 + swing_plane
+
+        elif AOA == -90: 
+            Y_tan = 0
+            Z_tan = np.linspace(-scale, scale, 200)
+            X_tan = -r
+
+            x2 = -r
+            y2 = 0
+            z2 = r
+
+            path = 0 + swing_plane
+
+        elif AOA > 0 and AOA < 90 or AOA < 0 and AOA > -90:
+            z2 = r - r*np.cos(AOA_rad)
+            x2 = r*np.sin(AOA_rad)
+            y2 = 0
+
+            m = -((x2-cen_x)/(z2-cen_y))
+            b = z2 - m*x2
+
+            z_tan = m*np.linspace(-scale, scale, 200) + b
+
+            Y_tan = 0
+            Z_tan = z_tan
+            X_tan = np.linspace(-scale, scale, 200)
+
+            path = 0 + swing_plane
+
+    elif trans_angle > 0 and trans_angle < 90:
+        if AOA == 0:
+            Y_tan = 0
+            Z_tan = 0
+            X_tan = np.linspace(-scale, scale, 200)
+
+            x2 = 0
+            y2 = 0
+            z2 = 0
+
+            path = -AOA + swing_plane
+
+        elif AOA == 90: 
+            Y_tan = np.linspace(-scale, scale, 200)*np.cos(trans_angle_rad)
+            Z_tan = np.linspace(-scale, scale, 200)*np.sin(trans_angle_rad)
+            X_tan = r
+
+            x2 = r
+            y2 = r*np.cos(trans_angle_rad)
+            z2 = r*np.sin(trans_angle_rad)
+
+            rho = AOA/np.sin(trans_angle_rad)
+            path = -rho*np.cos(trans_angle_rad) + swing_plane
+
+        elif AOA == -90: 
+            Y_tan = np.linspace(-scale, scale, 200)*np.cos(trans_angle_rad)
+            Z_tan = np.linspace(-scale, scale, 200)*np.sin(trans_angle_rad)
+            X_tan = -r
+
+            x2 = -r
+            y2 = r*np.cos(trans_angle_rad)
+            z2 = r*np.sin(trans_angle_rad)
+
+            rho = AOA/np.sin(trans_angle_rad)
+            path = -rho*np.cos(trans_angle_rad) + swing_plane
+
+        elif AOA > 0 and AOA < 90 or AOA < 0 and AOA > -90:
+            Y2 = r - r*np.cos(AOA_rad)
+            X2 = r*np.sin(AOA_rad)
+
+            m = -((X2-cen_x)/(Y2-cen_y))
+            b = Y2 - m*X2
+
+            y_tan = m*np.linspace(-scale, scale, 200) + b
+
+            Y_tan = y_tan*np.cos(trans_angle_rad)
+            Z_tan = y_tan*np.sin(trans_angle_rad)
+            X_tan = np.linspace(-scale, scale, 200)
+
+            rho = AOA/np.sin(trans_angle_rad)
+            path = -rho*np.cos(trans_angle_rad) + swing_plane
+
+            x2 = X2
+            y2 = Y2*np.cos(trans_angle_rad)
+            z2 = Y2*np.sin(trans_angle_rad)
+
+    # --------------------------------------------------------------------------------------
+
+    # Translated coordinates 
+    # Translated Plane Coordinates 
+    Xcor_p = xcor_p
+    Ycor_p = ycor_p*np.cos(trans_angle_rad) 
+    Zcor_p = ycor_p*np.sin(trans_angle_rad)
+
+    # Translated Circle Coordinates 
+    Xcor_c = xcor_c
+    Ycor_c = ycor_c*np.cos(trans_angle_rad)
+    Zcor_c = ycor_c*np.sin(trans_angle_rad)
+
+    # --------------------------------------------------------------------------------------
+
+    # Creating the Plot
+    ax.plot_surface(xcor_p, ycor_p, zcor_p, alpha=0.3)
+    ax.plot_surface(Xcor_p, Ycor_p, Zcor_p, alpha=0.3)
+    ax.plot(Xcor_c, Ycor_c, Zcor_c, '-g')
+    #ax.plot(X_tan, Y_tan, Z_tan, '-r', label = 'Tangent to Contact')
+    ax.plot((-scale,scale), (0,0), (0,0), '-r', label = f'Swing Direction: {swing_plane} Degrees')
+    ax.plot((-scale*np.cos(swing_plane_rad),scale*np.cos(swing_plane_rad)),(-scale*np.sin(swing_plane_rad),scale*np.sin(swing_plane_rad)), (0,0), '-k', label = 'Swing Direction Reference (Swing Direction 0 Degrees)')
+    ax.scatter3D(x2, y2, z2, color = "blue", label = 'Contact Point on Plane')
+    ax.legend()
+    ax.text(-20, -15, -15, 'Low Point', color='black', fontsize=8)
+    ax.text(50, 45, 45, f'Swing Plane: {trans_angle}', color='black', fontsize=8)
+    ax.text(40, -45, 0, f'Path: {path:0.2f}', color='black', fontsize=8)
+    ax.text(-70, -40, 0, f'AOA: {AOA}', color='black', fontsize=8)
+    ax.set_axis_off()
+    ax.set_xlim(-scale/1.5, scale/1.5)
+    ax.set_ylim(-scale/1.5, scale/1.5)
+    ax.set_zlim(-scale/1.5, scale/1.5)
+    ax.set_title('3D Golf Club Plane For Path and AOA')
+    #ax.set_xlabel('x-axis')
+    #ax.set_ylabel('y-axis')
+    #ax.set_zlabel('z-axis')
+    plt.show()
