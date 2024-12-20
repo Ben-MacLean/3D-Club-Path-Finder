@@ -6,11 +6,13 @@ from mpl_toolkits.mplot3d import Axes3D
 # --------------------------------------------------------------------------------------
 
 # Scale Factor 
-scale = 100    
+scale = 100 
+# Inputed Values    
 trans_angle = int(input("Translational Angle (Degrees): "))
 swing_plane = int(input("Swing Plane Angle (Degrees): "))
 AOA = int(input("Angle of Attack (Degrees): "))
 
+# Program Calculations
 if type(scale) and type(trans_angle) and type(AOA) == str: 
 
     print("\nInput Values are not Valid! Please Input an Integer!\n\nTry Again!!\n")
