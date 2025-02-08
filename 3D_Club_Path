@@ -8,9 +8,9 @@ from mpl_toolkits.mplot3d import Axes3D
 # Scale Factor 
 scale = 100 
 # Inputed Values    
-trans_angle = int(input("Translational Angle (Degrees): "))
-swing_plane = int(input("Swing Plane Angle (Degrees): "))
-AOA = int(input("Angle of Attack (Degrees): "))
+trans_angle = float(input("Translational Angle (Degrees): "))
+swing_plane = float(input("Swing Plane Angle (Degrees): "))
+AOA = float(input("Angle of Attack (Degrees): "))
 
 # Program Calculations
 if type(scale) and type(trans_angle) and type(AOA) == str: 
